@@ -1,0 +1,67 @@
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="OData.Sample.WebApi" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="WorldRegion">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ISO" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="NameGER" Type="Edm.String" />
+        <NavigationProperty Name="CountryRegions" Type="Collection(OData.Sample.WebApi.CountryRegion)" />
+        <NavigationProperty Name="Countries" Type="Collection(OData.Sample.WebApi.Country)" />
+      </EntityType>
+      <EntityType Name="CountryRegion">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ISO" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="NameGER" Type="Edm.String" />
+        <Property Name="WorldRegionId" Type="Edm.Int32" />
+        <NavigationProperty Name="WorldRegion" Type="OData.Sample.WebApi.WorldRegion">
+          <ReferentialConstraint Property="WorldRegionId" ReferencedProperty="Id" />
+        </NavigationProperty>
+        <NavigationProperty Name="Countries" Type="Collection(OData.Sample.WebApi.Country)" />
+      </EntityType>
+      <EntityType Name="Country">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DisplayName" Type="Edm.String" />
+        <Property Name="DisplayNameGER" Type="Edm.String" />
+        <Property Name="EU" Type="Edm.String" />
+        <Property Name="EWR" Type="Edm.String" />
+        <Property Name="ISO2" Type="Edm.String" />
+        <Property Name="ISO3" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="NameGER" Type="Edm.String" />
+        <Property Name="CountryRegionId" Type="Edm.Int32" />
+        <Property Name="WorldRegionId" Type="Edm.Int32" />
+        <NavigationProperty Name="CountryRegion" Type="OData.Sample.WebApi.CountryRegion">
+          <ReferentialConstraint Property="CountryRegionId" ReferencedProperty="Id" />
+        </NavigationProperty>
+        <NavigationProperty Name="WorldRegion" Type="OData.Sample.WebApi.WorldRegion">
+          <ReferentialConstraint Property="WorldRegionId" ReferencedProperty="Id" />
+        </NavigationProperty>
+      </EntityType>
+      <EntityContainer Name="CountriesContext">
+        <EntitySet Name="WorldRegions" EntityType="OData.Sample.WebApi.WorldRegion">
+          <NavigationPropertyBinding Path="Countries" Target="Countries" />
+          <NavigationPropertyBinding Path="CountryRegions" Target="CountryRegions" />
+        </EntitySet>
+        <EntitySet Name="CountryRegions" EntityType="OData.Sample.WebApi.CountryRegion">
+          <NavigationPropertyBinding Path="Countries" Target="Countries" />
+          <NavigationPropertyBinding Path="WorldRegion" Target="WorldRegions" />
+        </EntitySet>
+        <EntitySet Name="Countries" EntityType="OData.Sample.WebApi.Country">
+          <NavigationPropertyBinding Path="CountryRegion" Target="CountryRegions" />
+          <NavigationPropertyBinding Path="WorldRegion" Target="WorldRegions" />
+        </EntitySet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>OData.Sample.Client</AssemblyName>
+    <RootNamespace>OData.Sample.Client</RootNamespace>
+    <Title>OData.Sample.Client</Title>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Connected Services\ODataSampleService\ODataSampleServiceCsdl.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Connected Services\ODataSampleService\ODataSampleServiceCsdl.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoBogus" Version="2.13.1" />
+    <PackageReference Include="Microsoft.OData.Client" Version="7.12.5" />
+    <PackageReference Include="Microsoft.OData.Core" Version="7.12.5" />
+    <PackageReference Include="Microsoft.OData.Edm" Version="7.12.5" />
+    <PackageReference Include="Microsoft.Spatial" Version="7.12.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Spectre.Console" Version="0.45.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+  </ItemGroup>
+  
+</Project>

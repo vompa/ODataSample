@@ -1,0 +1,688 @@
+{
+	"info": {
+		"_postman_id": "18f1af60-92ec-47ec-bbe4-e5fef1906f44",
+		"name": "OData.Sample.WebApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Metadata",
+			"item": [
+				{
+					"name": "Metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/$metadata",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"$metadata"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Countries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/$metadata#countries",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"$metadata"
+							],
+							"hash": "countries"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CountryRegions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/$metadata#CountryRegions",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"$metadata"
+							],
+							"hash": "CountryRegions"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WorldRegions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/$metadata#WorldRegions",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"$metadata"
+							],
+							"hash": "WorldRegions"
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Countries",
+			"item": [
+				{
+					"name": "Select",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$orderby=NameGER asc",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$orderby",
+									"value": "NameGER asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SelectByKey",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries(276)",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries(276)"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Country",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"DisplayName\": \"Republic of Burundi\",\r\n\t\"DisplayNameGER\": \"Republik Burundi\",\r\n\t\"EU\": \"N\",\r\n\t\"EWR\": \"N\",\r\n\t\"ISO2\": \"BI\",\r\n\t\"ISO3\": \"BDI\",\r\n\t\"Name\": \"Burundi\",\r\n\t\"NameGER\": \"Republic of Burundi\",\r\n\t\"CountryRegionId\": 910,\r\n\t\"WorldRegionId\": 903\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ServiceRoot}}/countries",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Country",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"DisplayName\": \"Federal Republic of Germany mod\",\r\n    \"DisplayNameGER\": \"Bundesrepublik Deutschland mod\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ServiceRoot}}/countries(276)",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries(276)"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Country",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 40,\r\n    \"DisplayName\": \"Republic of Austria 1253\",\r\n    \"DisplayNameGER\": \"Republik Österreich\",\r\n    \"EU\": \"Y\",\r\n    \"EWR\": \"Y\",\r\n    \"ISO2\": \"AT\",\r\n    \"ISO3\": \"AUT\",\r\n    \"Name\": \"Austria\",\r\n    \"NameGER\": \"Republic of Austria\",\r\n    \"CountryRegionId\": 926,\r\n    \"WorldRegionId\": 908\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ServiceRoot}}/countries(40)",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries(40)"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SelectExpand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$orderby=NameGER asc&expand=CountryRegion($expand=WorldRegion)&expand=WorldRegion",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$orderby",
+									"value": "NameGER asc"
+								},
+								{
+									"key": "expand",
+									"value": "CountryRegion($expand=WorldRegion)"
+								},
+								{
+									"key": "expand",
+									"value": "WorldRegion"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SubSelect",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$select=Name,NameGER,ISO2,ISO3",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$select",
+									"value": "Name,NameGER,ISO2,ISO3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SubSelectExpandTop2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$orderby=NameGER asc&expand=countryRegion(select=NameGER;$expand=worldRegion(select=NameGER))&expand=WorldRegion&select=Name,NameGER,ISO2,ISO3&top=2",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$orderby",
+									"value": "NameGER asc"
+								},
+								{
+									"key": "expand",
+									"value": "countryRegion(select=NameGER;$expand=worldRegion(select=NameGER))"
+								},
+								{
+									"key": "expand",
+									"value": "WorldRegion"
+								},
+								{
+									"key": "select",
+									"value": "Name,NameGER,ISO2,ISO3"
+								},
+								{
+									"key": "top",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$filter=ISO2 eq 'AT' or ISO2 eq 'DE' or ISO2 eq 'IT'",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$filter",
+									"value": "ISO2 eq 'AT' or ISO2 eq 'DE' or ISO2 eq 'IT'"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FilterShowCount",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$count=true&$filter=ISO2 eq 'AT' or ISO2 eq 'DE' or ISO2 eq 'IT'",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$count",
+									"value": "true"
+								},
+								{
+									"key": "$filter",
+									"value": "ISO2 eq 'AT' or ISO2 eq 'DE' or ISO2 eq 'IT'"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FilterFunctionAndCount",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$count=true&filter=length(DisplayNameGER) gt 45&orderby=NameGER asc",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$count",
+									"value": "true"
+								},
+								{
+									"key": "filter",
+									"value": "length(DisplayNameGER) gt 45"
+								},
+								{
+									"key": "orderby",
+									"value": "NameGER asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CountPlain",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries/$count",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries",
+								"$count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CountJson",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$count=true&$top=0",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$count",
+									"value": "true"
+								},
+								{
+									"key": "$top",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CountGroupBy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$apply=groupby((CountryRegionId),aggregate($count as CountByCountByRegion))",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$apply",
+									"value": "groupby((CountryRegionId),aggregate($count as CountByCountByRegion))"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CustomSearch",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countries?$count=true&$select=Name&$search=LaenderInAfrika",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countries"
+							],
+							"query": [
+								{
+									"key": "$count",
+									"value": "true"
+								},
+								{
+									"key": "$select",
+									"value": "Name"
+								},
+								{
+									"key": "$search",
+									"value": "LaenderInEuropa",
+									"disabled": true
+								},
+								{
+									"key": "$search",
+									"value": "LaenderInAfrika"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CountryRegions",
+			"item": [
+				{
+					"name": "Select",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countryregions?$orderby=NameGER asc",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countryregions"
+							],
+							"query": [
+								{
+									"key": "$orderby",
+									"value": "NameGER asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Expand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countryregions?$expand=countries",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countryregions"
+							],
+							"query": [
+								{
+									"key": "$expand",
+									"value": "countries"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FilterExpand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countryregions(957)?&expand=countries",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countryregions(957)"
+							],
+							"query": [
+								{
+									"key": null,
+									"value": null
+								},
+								{
+									"key": "expand",
+									"value": "countries"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RegionByCountryCount",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/countryregions?$filter=$it/Countries/$count ge 10",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"countryregions"
+							],
+							"query": [
+								{
+									"key": "$filter",
+									"value": "$it/Countries/$count ge 10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WorldRegions",
+			"item": [
+				{
+					"name": "Select",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/worldregions?$orderby=NameGER asc",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"worldregions"
+							],
+							"query": [
+								{
+									"key": "$orderby",
+									"value": "NameGER asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Expand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/worldregions(903)?$expand=countries($count=true)",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"worldregions(903)"
+							],
+							"query": [
+								{
+									"key": "$expand",
+									"value": "countries($count=true)"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FilterGroupCount",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ServiceRoot}}/Countries?$apply=filter(WorldRegion/ISO in ('EU','AF'))/groupby((WorldRegion/NameGER), aggregate($count as CountryCount))",
+							"host": [
+								"{{ServiceRoot}}"
+							],
+							"path": [
+								"Countries"
+							],
+							"query": [
+								{
+									"key": "$apply",
+									"value": "filter(WorldRegion/ISO in ('EU','AF'))/groupby((WorldRegion/NameGER), aggregate($count as CountryCount))"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ServiceRoot",
+			"value": "https://localhost:7239/odata/v1",
+			"type": "default"
+		}
+	]
+}
