@@ -10,6 +10,7 @@ An end-to-end OData v4 sample in .NET 8:
 ## Contents
 
 - [Screenshots](#screenshots)
+- [Architecture](#architecture)
 - [Repository layout](#repository-layout)
 - [Requirements](#requirements)
 - [Getting started](#getting-started)
@@ -29,6 +30,40 @@ An end-to-end OData v4 sample in .NET 8:
 ![OData queries against the running server: count, filter with select and expand, custom search, groupby](docs/img/odata-queries.jpg)
 
 *Real requests against the locally running server (output condensed into tables). The `$search` term `LaenderInEuropa` is the custom search described below.*
+
+## Architecture
+
+```mermaid
+flowchart TB
+    client["OData.Sample.Client<br/>console app with 6 commands<br/>typed LINQ queries and CRUD"]
+    proxy["OData Connected Service proxy<br/>generated from $metadata"]
+
+    subgraph api["OData.Sample.WebApi (ASP.NET Core)"]
+        direction TB
+        odata["/odata/v1<br/>WorldRegions · CountryRegions · Countries<br/>$filter · $expand · $apply · $search"]
+        plain["/allelaender<br/>plain Web API controller"]
+        ef["EF Core"]
+        odata --> ef
+        plain --> ef
+    end
+
+    db[("SQLite<br/>ZSQLite.db")]
+    seed["data/*.json<br/>embedded seed data"]
+
+    client --> proxy
+    proxy -- "HTTPS, OData v4" --> odata
+    ef --> db
+    seed -. "wiped and reseeded at every start" .-> db
+
+    classDef ext fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
+    classDef endpoint fill:#ecfdf5,stroke:#10b981,color:#064e3b
+    classDef data fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    class client,proxy ext
+    class odata,plain,ef endpoint
+    class db,seed data
+```
+
+*The client talks to the server only through the generated proxy; the server exposes the same data once as OData and once as a plain Web API controller for comparison.*
 
 ## Repository layout
 
