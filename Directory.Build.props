@@ -1,0 +1,49 @@
+<!-- Global properties for all projects in the Solution -->
+<Project>
+  <PropertyGroup>
+    <!-- Use C# 10.0 compiler features
+         See: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version -->
+    <LangVersion>10.0</LangVersion>
+
+    <!-- Use non-nullable reference types
+         See: https://docs.microsoft.com/en-us/dotnet/csharp/nullable-references -->
+    <Nullable>enable</Nullable>
+
+    <!-- As we are always referencing SolutionInfo.cs we must not auto-generate an AssemblyInfo.cs -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <!-- CS8002: Referenced assembly does not have a strong name
+         Caliburn.Micro does not have a strong name for the pre-release version
+         We have to suppress this here, as .editorconfig seems to be ignored for CSC issues -->
+    <NoWarn>8002</NoWarn>
+  </PropertyGroup>
+
+  <!-- Include SolutionInfo -->
+  <ItemGroup>
+    <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
+  </ItemGroup>
+  
+  <!-- Include Analyzers -->
+  <!-- <PrivateAssets>all</PrivateAssets> excludes the packages from production build -->
+  <ItemGroup Label="Package References">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.2.32">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="IDisposableAnalyzers" Version="4.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <!--
+    <PackageReference Include="Meziantou.Analyzer" Version="1.0.697">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    -->
+  </ItemGroup>
+  
+</Project>
