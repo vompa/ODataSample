@@ -7,6 +7,7 @@ An end-to-end OData v4 sample in .NET 8:
 
 ## Contents
 
+- [Screenshots](#screenshots)
 - [Repository layout](#repository-layout)
 - [Requirements](#requirements)
 - [Getting started](#getting-started)
@@ -16,6 +17,16 @@ An end-to-end OData v4 sample in .NET 8:
 - [Configuration](#configuration)
 - [Tech stack](#tech-stack)
 - [License](#license)
+
+## Screenshots
+
+![Swagger UI of the OData.Sample.WebApi with the OData endpoints for countries, country regions and world regions](docs/img/swagger-overview.jpg)
+
+*Swagger UI (Development profile only): the controllers under `odata/v1` plus the plain `AlleLaender` controller for comparison.*
+
+![OData queries against the running server: count, filter with select and expand, custom search, groupby](docs/img/odata-queries.jpg)
+
+*Real requests against the locally running server (output condensed into tables). The `$search` term `LaenderInEuropa` is the custom search described below.*
 
 ## Repository layout
 
