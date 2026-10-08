@@ -228,3 +228,7 @@ Set `DoSeeding` to `false` to keep changes across restarts.
 [VS2022]: https://visualstudio.microsoft.com/
 [VSCode]: https://code.visualstudio.com/
 [VSOdataExt]: https://marketplace.visualstudio.com/items?itemName=marketplace.ODataConnectedService2022
+
+## Dependency updates
+
+Packages were updated within .NET 8 to remove known vulnerabilities (checked with `dotnet list package --vulnerable --include-transitive`). The unused `AutoMapper` packages were removed. Behaviour and endpoints are unchanged.
