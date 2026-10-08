@@ -1,4 +1,6 @@
 # ODataSample
+[![CI](https://github.com/vompa/ODataSample/actions/workflows/ci.yml/badge.svg)](https://github.com/vompa/ODataSample/actions/workflows/ci.yml)
+
 
 An end-to-end OData v4 sample in .NET 8:
 
