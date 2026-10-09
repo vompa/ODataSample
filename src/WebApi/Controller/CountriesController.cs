@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 using OData.Sample.WebApi.Domain.Entities;
 using OData.Sample.WebApi.Infrastructure.Db;
+using OData.Sample.WebApi.Infrastructure.Extensions;
 
 public class CountriesController : ODataController
 {
@@ -40,6 +41,7 @@ public class CountriesController : ODataController
 	[AcceptVerbs("POST", "PUT")]
 	public async Task<IActionResult> PostAsync([FromBody] Country entity)
 	{
+		ModelState.AddMissingRequiredProperties(_context, entity);
 		if (!ModelState.IsValid)
 		{
 			return BadRequest(ModelState);

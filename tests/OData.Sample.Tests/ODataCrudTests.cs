@@ -107,6 +107,32 @@ public sealed class ODataCrudTests : IClassFixture<ODataSampleFactory>
         Assert.Equal(before, await CountAsync());
     }
 
+    [Theory]
+    [InlineData("{\"Name\":\"x\"}", "DisplayName")]
+    [InlineData("{\"Name\":\"x\",\"NameGER\":\"x\",\"DisplayName\":\"   \",\"DisplayNameGER\":\"x\"}", "DisplayName")]
+    [InlineData("{}", "NameGER")]
+    public async Task Post_with_missing_required_field_returns_bad_request_and_creates_nothing(string body, string missingField)
+    {
+        var before = await CountAsync();
+
+        var response = await _client.PostAsync(Url("/odata/v1/Countries"), Json(body));
+        var error = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("error");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Contains(missingField, error.GetRawText());
+        Assert.Equal(before, await CountAsync());
+    }
+
+    [Theory]
+    [InlineData("/odata/v1/CountryRegions")]
+    [InlineData("/odata/v1/WorldRegions")]
+    public async Task Post_with_empty_body_to_region_collections_returns_bad_request(string path)
+    {
+        var response = await _client.PostAsync(Url(path), Json("{}"));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     [Fact]
     public async Task Created_country_is_counted_and_disappears_after_delete()
     {
