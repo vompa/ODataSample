@@ -39,12 +39,20 @@ public sealed class ODataCrudTests : IClassFixture<ODataSampleFactory>
     public async Task Post_creates_a_country_that_can_be_read_back_and_deleted()
     {
         var id = await CreateCountryAsync("ZA");
+        try
+        {
+            var read = await _client.GetAsync(Url("/odata/v1/Countries(" + id + ")?$select=ISO2,Name"));
+            var json = JsonDocument.Parse(await read.Content.ReadAsStringAsync()).RootElement;
 
-        var read = await _client.GetAsync(Url("/odata/v1/Countries(" + id + ")?$select=ISO2,Name"));
-        Assert.Equal(HttpStatusCode.OK, read.StatusCode);
-        Assert.Contains("Testland", await read.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+            Assert.Equal(HttpStatusCode.OK, read.StatusCode);
+            Assert.Equal("ZA", json.GetProperty("ISO2").GetString());
+            Assert.Equal("Testland", json.GetProperty("Name").GetString());
+        }
+        finally
+        {
+            await DeleteCountryAsync(id);
+        }
 
-        await DeleteCountryAsync(id);
         Assert.Equal(HttpStatusCode.NotFound, (await _client.GetAsync(Url("/odata/v1/Countries(" + id + ")"))).StatusCode);
     }
 
@@ -52,31 +60,51 @@ public sealed class ODataCrudTests : IClassFixture<ODataSampleFactory>
     public async Task Patch_changes_only_the_given_property()
     {
         var id = await CreateCountryAsync("ZB");
+        try
+        {
+            var patch = await _client.PatchAsync(Url("/odata/v1/Countries(" + id + ")"), Json("{\"DisplayNameGER\":\"Neuer Name\"}"));
+            var read = JsonDocument.Parse(await _client.GetStringAsync(Url("/odata/v1/Countries(" + id + ")"))).RootElement;
 
-        var patch = await _client.PatchAsync(Url("/odata/v1/Countries(" + id + ")"), Json("{\"DisplayNameGER\":\"Neuer Name\"}"));
-        var read = JsonDocument.Parse(await _client.GetStringAsync(Url("/odata/v1/Countries(" + id + ")"))).RootElement;
-
-        Assert.True(patch.IsSuccessStatusCode, patch.StatusCode.ToString());
-        Assert.Equal("Neuer Name", read.GetProperty("DisplayNameGER").GetString());
-        Assert.Equal("Testland", read.GetProperty("DisplayName").GetString());
-
-        await DeleteCountryAsync(id);
+            Assert.True(patch.IsSuccessStatusCode, patch.StatusCode.ToString());
+            Assert.Equal("Neuer Name", read.GetProperty("DisplayNameGER").GetString());
+            Assert.Equal("Testland", read.GetProperty("DisplayName").GetString());
+        }
+        finally
+        {
+            await DeleteCountryAsync(id);
+        }
     }
 
-    [Fact]
-    public async Task Patch_of_an_unknown_country_returns_not_found()
+    [Theory]
+    [InlineData("PATCH")]
+    [InlineData("DELETE")]
+    [InlineData("GET")]
+    public async Task Operations_on_an_unknown_country_return_not_found(string method)
     {
-        var response = await _client.PatchAsync(Url("/odata/v1/Countries(999999)"), Json("{\"DisplayNameGER\":\"x\"}"));
+        using var request = new HttpRequestMessage(new HttpMethod(method), Url("/odata/v1/Countries(999999)"));
+        if (method == "PATCH")
+        {
+            request.Content = Json("{\"DisplayNameGER\":\"x\"}");
+        }
+
+        var response = await _client.SendAsync(request);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
-    public async Task Delete_of_an_unknown_country_returns_not_found()
+    [Theory]
+    [InlineData("{bad json")]
+    [InlineData("{\"Name\":")]
+    public async Task Post_with_malformed_json_returns_bad_request_and_creates_nothing(string body)
     {
-        var response = await _client.DeleteAsync(Url("/odata/v1/Countries(999999)"));
+        var before = await CountAsync();
 
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        var response = await _client.PostAsync(Url("/odata/v1/Countries"), Json(body));
+        var error = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("error");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(JsonValueKind.String, error.GetProperty("code").ValueKind);
+        Assert.Equal(before, await CountAsync());
     }
 
     [Fact]
@@ -84,11 +112,17 @@ public sealed class ODataCrudTests : IClassFixture<ODataSampleFactory>
     {
         var before = await CountAsync();
         var id = await CreateCountryAsync("ZC");
-        var during = await CountAsync();
-        await DeleteCountryAsync(id);
-        var after = await CountAsync();
+        int during;
+        try
+        {
+            during = await CountAsync();
+        }
+        finally
+        {
+            await DeleteCountryAsync(id);
+        }
 
         Assert.Equal(before + 1, during);
-        Assert.Equal(before, after);
+        Assert.Equal(before, await CountAsync());
     }
 }

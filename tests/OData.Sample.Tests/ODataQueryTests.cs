@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text.Json;
 
@@ -18,14 +19,61 @@ public sealed class ODataQueryTests : IClassFixture<ODataSampleFactory>
     }
 
     [Theory]
-    [InlineData("/odata/v1/Countries/$count", "264")]
-    [InlineData("/odata/v1/CountryRegions/$count", "22")]
-    [InlineData("/odata/v1/WorldRegions/$count", "6")]
-    public async Task Entity_sets_are_seeded_from_the_embedded_json(string url, string expected)
+    [InlineData("/odata/v1/Countries/$count", 264)]
+    [InlineData("/odata/v1/CountryRegions/$count", 22)]
+    [InlineData("/odata/v1/WorldRegions/$count", 6)]
+    public async Task Entity_sets_are_seeded_from_the_embedded_json(string path, int expected)
     {
-        var body = await _client.GetStringAsync(new Uri(url, UriKind.Relative));
+        var body = await _client.GetStringAsync(new Uri(path, UriKind.Relative));
 
-        Assert.Equal(expected, body);
+        Assert.Equal(expected, int.Parse(body, CultureInfo.InvariantCulture));
+    }
+
+    [Theory]
+    [InlineData("contains(Name,'land')", 31)]
+    [InlineData("startswith(Name,'Au')", 2)]
+    [InlineData("ISO2 ne 'AT'", 263)]
+    [InlineData("ISO2 eq 'AT' or ISO2 eq 'DE'", 2)]
+    [InlineData("ISO2 eq 'XX'", 0)]
+    public async Task Filter_expressions_return_the_expected_number_of_countries(string filter, int expected)
+    {
+        var json = await GetJsonAsync("/odata/v1/Countries?$count=true&$top=0&$filter=" + filter);
+
+        Assert.Equal(expected, json.GetProperty("@odata.count").GetInt32());
+        Assert.Equal(0, json.GetProperty("value").GetArrayLength());
+    }
+
+    [Fact]
+    public async Task Top_zero_returns_no_items_but_the_full_count()
+    {
+        var json = await GetJsonAsync("/odata/v1/Countries?$count=true&$top=0");
+
+        Assert.Equal(264, json.GetProperty("@odata.count").GetInt32());
+        Assert.Equal(0, json.GetProperty("value").GetArrayLength());
+    }
+
+    [Fact]
+    public async Task Orderby_desc_returns_the_last_iso2_code_first()
+    {
+        var json = await GetJsonAsync("/odata/v1/Countries?$orderby=ISO2 desc&$top=1&$select=ISO2");
+
+        Assert.Equal("ZW", json.GetProperty("value")[0].GetProperty("ISO2").GetString());
+    }
+
+    [Theory]
+    [InlineData("$filter=Foo eq 1", "Foo")]
+    [InlineData("$filter=ISO2 eq", "Expression expected")]
+    [InlineData("$top=-1", "non-negative integer")]
+    [InlineData("$search=Gibtsnicht", "")]
+    public async Task Invalid_query_options_are_rejected_with_a_bad_request_and_an_odata_error(string query, string messagePart)
+    {
+        var response = await _client.GetAsync(new Uri("/odata/v1/Countries?" + query, UriKind.Relative));
+        var error = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("error");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        // Der Server liefert fuer error.code derzeit einen leeren String; die Eigenschaft muss aber vorhanden sein.
+        Assert.Equal(JsonValueKind.String, error.GetProperty("code").ValueKind);
+        Assert.Contains(messagePart, error.GetProperty("message").GetString(), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -100,14 +148,6 @@ public sealed class ODataQueryTests : IClassFixture<ODataSampleFactory>
         var europe = viaSearch.GetProperty("@odata.count").GetInt32();
         Assert.Equal(viaFilter.GetProperty("@odata.count").GetInt32(), europe);
         Assert.InRange(europe, 40, 70);
-    }
-
-    [Fact]
-    public async Task Unknown_search_term_is_rejected()
-    {
-        var response = await _client.GetAsync(new Uri("/odata/v1/Countries?$search=Gibtsnicht", UriKind.Relative));
-
-        Assert.False(response.IsSuccessStatusCode);
     }
 
     [Fact]
