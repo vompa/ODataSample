@@ -17,5 +17,7 @@ jobs:
         run: dotnet restore ODataSample.sln
       - name: Build
         run: dotnet build ODataSample.sln --no-restore -c Release
+      - name: Test
+        run: dotnet test ODataSample.sln --no-build -c Release
       - name: Pakete auf bekannte Schwachstellen prüfen
         run: dotnet list ODataSample.sln package --vulnerable --include-transitive

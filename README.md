@@ -17,6 +17,7 @@ An end-to-end OData v4 sample in .NET 8:
 - [The OData service](#the-odata-service)
 - [Query examples](#query-examples)
 - [The console client](#the-console-client)
+- [Tests](#tests)
 - [Configuration](#configuration)
 - [Tech stack](#tech-stack)
 - [License](#license)
@@ -225,6 +226,16 @@ The service root is hard-coded as `ServiceRoot` in `Program.cs`. To add a comman
 ### Regenerating the proxy
 
 The typed proxy lives in `src/Client/Connected Services/ODataSampleService/`. After changing the server's EDM model, run the server, then right-click the service in Visual Studio and choose **Update OData Connected Service**. This requires the OData Connected Service extension.
+
+## Tests
+
+```shell
+dotnet test ODataSample.sln
+```
+
+`tests/OData.Sample.Tests` starts the real server in memory (`WebApplicationFactory`) with its own temporary SQLite file and checks the seeded data (264 countries, 22 country regions, 6 world regions), `$filter` / `$select` / `$orderby`, nested `$expand`, `$count`, `$apply`, the custom `$search`, server paging and the CRUD operations.
+
+The repository ships no EF migration (see [Getting started](#getting-started)), so the tests create the schema from the model before the application seeds it. The CI runs the tests on every push.
 
 ## Configuration
 
